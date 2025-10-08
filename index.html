@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Product Catalog</title>
+<style>
+body {
+  font-family: "Poppins", sans-serif;
+  margin: 0;
+  background: #f8f9fa;
+  color: #333;
+}
+
+/* Header */
+header {
+  background: linear-gradient(90deg, #0072ff, #00c6ff);
+  color: white;
+  padding: 20px;
+  text-align: center;
+  box-shadow: 0 3px 10px rgba(0,0,0,0.1);
+}
+
+/* Layout */
+.container {
+  display: flex;
+  gap: 20px;
+  padding: 20px;
+}
+
+/* Sidebar Filters */
+.sidebar {
+  flex: 1;
+  max-width: 250px;
+  background: white;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+}
+
+.sidebar h3 {
+  margin-bottom: 15px;
+  color: #0072ff;
+  text-align: center;
+}
+
+.sidebar label {
+  display: block;
+  margin: 10px 0 5px;
+  font-weight: bold;
+}
+
+.sidebar select, .sidebar input {
+  width: 100%;
+  padding: 7px;
+  margin-bottom: 10px;
+  border-radius: 5px;
+  border: 1px solid #ccc;
+}
+
+/* Product Grid */
+.products {
+  flex: 3;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+  gap: 20px;
+}
+
+/* Product Cards */
+.card {
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 3px 8px rgba(0,0,0,0.1);
+  padding: 15px;
+  text-align: center;
+  position: relative;
+  transition: transform 0.3s, box-shadow 0.3s;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 15px rgba(0,0,0,0.15);
+}
+
+.card img {
+  width: 100%;
+  height: 200px;
+  object-fit: contain;
+  margin-bottom: 10px;
+}
+
+.card h4 {
+  margin: 5px 0;
+  font-size: 1.1rem;
+}
+
+.price {
+  color: #0072ff;
+  font-weight: bold;
+  margin: 5px 0;
+}
+
+.rating {
+  color: #ffbb00;
+  margin: 5px 0;
+  font-size: 0.9rem;
+}
+
+.discount {
+  background: #ff4c4c;
+  color: white;
+  padding: 3px 7px;
+  border-radius: 5px;
+  font-weight: bold;
+  position: absolute;
+  top: 10px;
+  left: 10px;
+  font-size: 0.8rem;
+}
+
+.card-buttons {
+  display: none;
+  gap: 10px;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.card:hover .card-buttons {
+  display: flex;
+}
+
+.card-buttons button {
+  background: #0072ff;
+  color: white;
+  border: none;
+  padding: 7px 12px;
+  border-radius: 8px;
+  cursor: pointer;
+  font-size: 0.9rem;
+}
+
+.card-buttons button:hover {
+  background: #005fcc;
+}
+
+/* Buttons in sidebar */
+button {
+  background: #0072ff;
+  color: white;
+  border: none;
+  padding: 10px 15px;
+  border-radius: 8px;
+  cursor: pointer;
+}
+
+button:hover {
+  background: #005fcc;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .container { flex-direction: column; }
+  .sidebar { max-width: 100%; margin-bottom: 20px; }
+}
+</style>
+</head>
+<body>
+
+<header>
+  <h1>Product Catalog</h1>
+  <p>Find your perfect smartphone by brand, price, features, and more!</p>
+</header>
+
+<div class="container">
+
+  <!-- Sidebar Filters -->
+  <aside class="sidebar">
+    <h3>Filters</h3>
+
+    <label>Search:</label>
+    <input type="text" id="searchInput" placeholder="Search by model..." oninput="applyFilters()">
+
+    <label>Brand:</label>
+    <select id="brandFilter" onchange="applyFilters()">
+      <option value="all">All</option>
+      <option value="Samsung">Samsung</option>
+      <option value="Apple">Apple</option>
+      <option value="Xiaomi">Xiaomi</option>
+      <option value="OnePlus">OnePlus</option>
+      <option value="Vivo">Vivo</option>
+    </select>
+
+    <label>Price Range:</label>
+    <select id="priceFilter" onchange="applyFilters()">
+      <option value="all">All</option>
+      <option value="low">Below ₹20,000</option>
+      <option value="mid">₹20,000–₹50,000</option>
+      <option value="high">Above ₹50,000</option>
+    </select>
+
+    <label>Network:</label>
+    <select id="networkFilter" onchange="applyFilters()">
+      <option value="all">All</option>
+      <option value="4G">4G</option>
+      <option value="5G">5G</option>
+    </select>
+
+    <label>Sort By:</label>
+    <select id="sortFilter" onchange="applyFilters()">
+      <option value="default">Default</option>
+      <option value="lowHigh">Price: Low to High</option>
+      <option value="highLow">Price: High to Low</option>
+    </select>
+
+    <br>
+    <button onclick="applyFilters()">Apply Filters</button>
+  </aside>
+
+  <!-- Product Grid -->
+  <section class="products" id="productContainer"></section>
+
+</div>
+
+<script>
+// Expanded Product List
+const products = [
+  {brand:"Xiaomi", name:"Redmi Note 14 5G", price:16499, network:"5G", img:"https://fdn2.gsmarena.com/vv/pics/xiaomi/xiaomi-redmi-note-13-5g-1.jpg", rating:4, discount:0},
+  {brand:"OnePlus", name:"OnePlus 13R", price:37999, network:"5G", img:"https://fdn2.gsmarena.com/vv/pics/oneplus/oneplus-12r-1.jpg", rating:5, discount:7},
+  {brand:"Vivo", name:"Vivo T4x", price:13499, network:"4G", img:"https://fdn2.gsmarena.com/vv/pics/vivo/vivo-t3x-1.jpg", rating:3, discount:0},
+  {brand:"Samsung", name:"Galaxy A35", price:25999, network:"5G", img:"https://fdn2.gsmarena.com/vv/pics/samsung/samsung-galaxy-a35-1.jpg", rating:4, discount:5},
+  {brand:"Apple", name:"iPhone SE 3", price:49999, network:"5G", img:"https://fdn2.gsmarena.com/vv/pics/apple/apple-iphone-se-2022-1.jpg", rating:4, discount:0},
+  {brand:"Xiaomi", name:"Mi 13 Lite", price:29999, network:"5G", img:"https://fdn2.gsmarena.com/vv/pics/xiaomi/xiaomi-13-lite-1.jpg", rating:4, discount:8},
+  {brand:"OnePlus", name:"OnePlus Nord CE 3", price:24999, network:"5G", img:"https://m.media-amazon.com/images/I/6175SlKKECL._SL1500_.jpg", rating:4, discount:5},
+  {brand:"Samsung", name:"Galaxy M14", price:11999, network:"4G", img:"https://m.media-amazon.com/images/I/81ZSn2rk9WL.jpg", rating:3, discount:0},
+  {brand:"Vivo", name:"Vivo Y35", price:15499, network:"4G", img:"https://fdn2.gsmarena.com/vv/pics/vivo/vivo-y35-1.jpg", rating:4, discount:5},
+  {brand:"Apple", name:"iPhone 16 Pro", price:89999, network:"5G", img:"https://fdn2.gsmarena.com/vv/pics/apple/apple-iphone-16-pro-1.jpg", rating:5, discount:7},
+  {brand:"Xiaomi", name:"Redmi K70", price:22999, network:"5G", img:"https://fdn2.gsmarena.com/vv/pics/xiaomi/xiaomi-redmi-k70-1.jpg", rating:4, discount:10},
+  {brand:"Apple", name:"iPhone 17", price:82900, network:"5G", img:"https://www.apple.com/newsroom/images/2025/09/apple-debuts-iphone-17/article/Apple-iPhone-17-hero-250909_inline.jpg.large_2x.jpg", rating:5, discount:12},
+];
+
+// Create rating stars
+function ratingStars(r) {
+  return '★'.repeat(r) + '☆'.repeat(5-r);
+}
+
+// Display products
+function showProducts(items) {
+  const container = document.getElementById('productContainer');
+  container.innerHTML = "";
+  items.forEach(p => {
+    const card = document.createElement('div');
+    card.classList.add('card');
+    card.innerHTML = `
+      ${p.discount ? `<p class="discount">${p.discount}% OFF</p>` : ''}
+      <img src="${p.img}" alt="${p.name}">
+      <h4>${p.brand} ${p.name}</h4>
+      <p class="price">₹${p.price.toLocaleString()}</p>
+      <p class="rating">${ratingStars(p.rating)}</p>
+      <p>${p.network} Supported</p>
+      <div class="card-buttons">
+        <button>Add to Cart</button>
+        <button>View Details</button>
+      </div>
+    `;
+    container.appendChild(card);
+  });
+}
+
+// Apply filters
+function applyFilters() {
+  const brand = document.getElementById('brandFilter').value;
+  const price = document.getElementById('priceFilter').value;
+  const network = document.getElementById('networkFilter').value;
+  const search = document.getElementById('searchInput').value.toLowerCase();
+  const sort = document.getElementById('sortFilter').value;
+
+  let filtered = products.filter(p => {
+    const brandMatch = brand === "all" || p.brand === brand;
+    const priceMatch = (price === "all") ||
+                     (price === "low" && p.price < 20000) ||
+                     (price === "mid" && p.price >= 20000 && p.price <= 50000) ||
+                     (price === "high" && p.price > 50000);
+    const networkMatch = network === "all" || p.network === network;
+    const searchMatch = p.name.toLowerCase().includes(search);
+    return brandMatch && priceMatch && networkMatch && searchMatch;
+  });
+
+  if(sort === "lowHigh") filtered.sort((a,b) => a.price - b.price);
+  if(sort === "highLow") filtered.sort((a,b) => b.price - a.price);
+
+  showProducts(filtered);
+}
+
+// Show all products on load
+showProducts(products);
+</script>
+
+</body>
+</html>
